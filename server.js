@@ -38,8 +38,27 @@ app.get('/year/:selected_year', (req, res) => {
     fs.readFile(path.join(template_dir, 'year.html'), (err, template) => {
         // modify `template` and send response
         // this will require a query to the SQL database
+        if (err) {
+            res.status(404).type('txt');
+            res.write('cannot read dynamic.html');
+            res.end();
+        } else {
+            //res.status(200).type('html').send(template); // <-- you may need to change this
+            let result = document.getElementById("result");
+            let sql = `SELECT * FROM Consumption WHERE year = ` + req.params.selected_year;
+            db.all(sql, [], (err, rows) => {
+                //rows.forEach((row) => {
+                    //console.log(row);
+                //});
+                for (row = 0; row < rows.length; i++) {
+                    console.log(row);
+                }
+            });
+            db.close();
+            res.status(200).type('html').send(template); // <-- you may need to change this
+            res.end();
+        }
 
-        res.status(200).type('html').send(template); // <-- you may need to change this
     });
 });
 
