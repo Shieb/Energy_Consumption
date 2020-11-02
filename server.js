@@ -31,11 +31,17 @@ app.use(express.static(public_dir)); // serve static files from 'public' directo
 app.get('/', (req, res) => {
     res.redirect('/year/2018');
 });
+/*
+function updateAndSendResponse(rowString, template, res) {
+    template = template.replace('{{DATA}}', rowString);
+    res.status(200).type('html').send(template); 
+}
+*/
 
 // GET request handler for '/year/*'
 app.get('/year/:selected_year', (req, res) => {
     console.log(req.params.selected_year);
-    fs.readFile(path.join(template_dir, 'year.html'), (err, template) => {
+    fs.readFile(path.join(template_dir, 'year.html'), "utf-8", (err, template) => {
         // modify `template` and send response
         // this will require a query to the SQL database
         if (err) {
@@ -44,19 +50,32 @@ app.get('/year/:selected_year', (req, res) => {
             res.end();
         } else {
             //res.status(200).type('html').send(template); // <-- you may need to change this
-            let result = document.getElementById("result");
-            let sql = `SELECT * FROM Consumption WHERE year = ` + req.params.selected_year;
-            db.all(sql, [], (err, rows) => {
+            let sql = `SELECT * FROM Consumption WHERE year = ?`;
+            let row;
+            let rowString = "";
+            db.all(sql, [req.params.selected_year], (err, rows) => {
                 //rows.forEach((row) => {
                     //console.log(row);
                 //});
-                for (row = 0; row < rows.length; i++) {
-                    console.log(row);
+                for (row = 0; row < rows.length; row++) {
+                    let total = rows[row].coal + rows[row].natural_gas + rows[row].nuclear + rows[row].petroleum
+                        + rows[row].renewable;
+
+                    console.log(rows[row]);
+                    rowString = rowString + "<tr>";
+                    rowString = rowString + "<td>" + rows[row].state_abbreviation + "</td>";
+                    rowString = rowString + "<td>" + rows[row].coal + "</td>";
+                    rowString = rowString + "<td>" + rows[row].natural_gas + "</td>";
+                    rowString = rowString + "<td>" + rows[row].nuclear + "</td>";
+                    rowString = rowString + "<td>" + rows[row].petroleum + "</td>";
+                    rowString = rowString + "<td>" + rows[row].renewable + "</td>";
+                    rowString = rowString + "<td>" + total + "</td>";
+                    rowString = rowString + "</tr>";
                 }
+                template = template.replace('{{DATA}}', rowString);
+                res.status(200).type('html').send(template); 
+                //updateAndSendResponse(rowString, template, res); // <-- you may need to change this
             });
-            db.close();
-            res.status(200).type('html').send(template); // <-- you may need to change this
-            res.end();
         }
 
     });
