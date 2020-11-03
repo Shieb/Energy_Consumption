@@ -15,6 +15,7 @@
         var petroleum_count;
         var renewable_count;
     </script>
+    <script type="application/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 </head>
 <body>
     <table id="yearResult">
@@ -33,15 +34,86 @@
             {{DATA}}
         </tbody>
     </table>
+    
+    <canvas id="myChart" width="1000" height="1000"></canvas>
+    <script>
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [{{LABELS}}],
+                datasets: [{
+                    label: 'Coal',
+                    data: [{{COAL_VALUES}}],
+                    backgroundColor: [
+                        {{COAL_BACKGROUND}}
+                    ],
+                    borderColor: [
+                        {{COAL_BORDER}}
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'Natural Gas',
+                    data: [{{NATURAL_GAS_VALUES}}],
+                    backgroundColor: [
+                        {{NATURAL_GAS_BACKGROUND}}
+                    ],
+                    borderColor: [
+                        {{NATURAL_GAS_BORDER}}
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'Nuclear',
+                    data: [{{NUCLEAR_VALUES}}],
+                    backgroundColor: [
+                        {{NUCLEAR_BACKGROUND}}
+                    ],
+                    borderColor: [
+                        {{NUCLEAR_BORDER}}
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'Petroleum',
+                    data: [{{PETROLEUM_VALUES}}],
+                    backgroundColor: [
+                        {{PETROLEUM_BACKGROUND}}
+                    ],
+                    borderColor: [
+                        {{PETROLEUM_BORDER}}
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'Renewable',
+                    data: [{{RENEWABLE_VALUES}}],
+                    backgroundColor: [
+                        {{RENEWABLE_BACKGROUND}}
+                    ],
+                    borderColor: [
+                        {{RENEWABLE_BORDER}}
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+        </script>
+
 
     <!--
-    <canvas id="myChart" width="400" height="400"></canvas>
     <script>
     var ctx = document.getElementById('myChart').getContext('2d');
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            labels: ['Evan', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
             datasets: [{
                 label: '# of Votes',
                 data: [12, 19, 3, 5, 2, 3],

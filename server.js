@@ -31,12 +31,6 @@ app.use(express.static(public_dir)); // serve static files from 'public' directo
 app.get('/', (req, res) => {
     res.redirect('/year/2018');
 });
-/*
-function updateAndSendResponse(rowString, template, res) {
-    template = template.replace('{{DATA}}', rowString);
-    res.status(200).type('html').send(template); 
-}
-*/
 
 // GET request handler for '/year/*'
 app.get('/year/:selected_year', (req, res) => {
@@ -53,6 +47,24 @@ app.get('/year/:selected_year', (req, res) => {
             let sql = `SELECT * FROM Consumption WHERE year = ?`;
             let row;
             let rowString = "";
+            let labelsString = "";
+            let coalValueString = "";
+            let naturalGasValueString = "";
+            let nuclearValueString = "";
+            let petroleumValueString = "";
+            let renewableValueString = "";
+
+            let coalBackground = "";
+            let coalBorder = "";
+            let naturalGasBackground = "";
+            let naturalGasBorder = "";
+            let nuclearBackground = "";
+            let nuclearBorder = "";
+            let petroleumBackground = "";
+            let petroleumBorder = "";
+            let renewableBackground = "";
+            let renewableBorder = "";
+
             db.all(sql, [req.params.selected_year], (err, rows) => {
                 //rows.forEach((row) => {
                     //console.log(row);
@@ -61,6 +73,26 @@ app.get('/year/:selected_year', (req, res) => {
                     let total = rows[row].coal + rows[row].natural_gas + rows[row].nuclear + rows[row].petroleum
                         + rows[row].renewable;
 
+                    if (row != rows.length && row != 0) {
+                        labelsString = labelsString + ", ";
+                        coalValueString = coalValueString  + ", ";
+                        naturalGasValueString = naturalGasValueString + ", ";
+                        nuclearValueString = nuclearValueString + ", ";
+                        petroleumValueString = petroleumValueString + ", ";
+                        renewableValueString = renewableValueString + ", ";
+
+                        coalBackground = coalBackground + ", ";
+                        coalBorder = coalBorder + ", ";
+                        naturalGasBackground = naturalGasBackground + ", ";
+                        naturalGasBorder = naturalGasBorder + ", ";
+                        nuclearBackground = nuclearBackground + ", ";
+                        nuclearBorder = nuclearBorder + ", ";
+                        petroleumBackground = petroleumBackground + ", ";
+                        petroleumBorder = petroleumBorder + ", ";
+                        renewableBackground = renewableBackground + ", ";
+                        renewableBorder = renewableBorder + ", ";
+                    }
+                    
                     console.log(rows[row]);
                     rowString = rowString + "<tr>";
                     rowString = rowString + "<td>" + rows[row].state_abbreviation + "</td>";
@@ -71,8 +103,44 @@ app.get('/year/:selected_year', (req, res) => {
                     rowString = rowString + "<td>" + rows[row].renewable + "</td>";
                     rowString = rowString + "<td>" + total + "</td>";
                     rowString = rowString + "</tr>";
+
+                    labelsString = labelsString + "'" + rows[row].state_abbreviation + "'";
+                    coalValueString = coalValueString + "'" + rows[row].coal + "'";
+                    naturalGasValueString = naturalGasValueString + "'" + rows[row].natural_gas + "'";
+                    nuclearValueString = nuclearValueString + "'" + rows[row].nuclear + "'";
+                    petroleumValueString = petroleumValueString + "'" + rows[row].petroleum + "'";
+                    renewableValueString = renewableValueString + "'" + rows[row].renewable + "'";
+
+                    coalBackground = coalBackground + "'rgba(255, 99, 132, 0.2)'";
+                    coalBorder = coalBorder + "'rgba(255, 99, 132, 1)'";
+                    naturalGasBackground = naturalGasBackground + "'rgba(54, 162, 235, 0.2)'";
+                    naturalGasBorder = naturalGasBorder + "'rgba(54, 162, 235, 1)'";
+                    nuclearBackground = nuclearBackground + "'rgba(255, 206, 86, 0.2)'";
+                    nuclearBorder = nuclearBorder + "'rgba(255, 206, 86, 1)'";
+                    petroleumBackground = petroleumBackground + "'rgba(75, 192, 192, 0.2)'";
+                    petroleumBorder = petroleumBorder + "'rgba(75, 192, 192, 1)'";
+                    renewableBackground = renewableBackground + "'rgba(153, 102, 255, 0.2)'";
+                    renewableBorder = renewableBorder + "'rgba(153, 102, 255, 1)'";
                 }
                 template = template.replace('{{DATA}}', rowString);
+                template = template.replace('{{LABELS}}', labelsString);
+                template = template.replace('{{COAL_VALUES}}', coalValueString);
+                template = template.replace('{{NATURAL_GAS_VALUES}}', naturalGasValueString);
+                template = template.replace('{{NUCLEAR_VALUES}}', nuclearValueString);
+                template = template.replace('{{PETROLEUM_VALUES}}', petroleumValueString);
+                template = template.replace('{{RENEWABLE_VALUES}}', renewableValueString);
+
+                template = template.replace('{{COAL_BACKGROUND}}', coalBackground);
+                template = template.replace('{{COAL_BORDER}}', coalBorder);
+                template = template.replace('{{NATURAL_GAS_BACKGROUND}}', naturalGasBackground);
+                template = template.replace('{{NATURAL_GAS_BORDER}}', naturalGasBorder);
+                template = template.replace('{{NUCLEAR_BACKGROUND}}', nuclearBackground);
+                template = template.replace('{{NUCLEAR_BORDER}}', nuclearBorder);
+                template = template.replace('{{PETROLEUM_BACKGROUND}}', petroleumBackground);
+                template = template.replace('{{PETROLEUM_BORDER}}', petroleumBorder);
+                template = template.replace('{{RENEWABLE_BACKGROUND}}', renewableBackground);
+                template = template.replace('{{RENEWABLE_BORDER}}', renewableBorder);
+
                 res.status(200).type('html').send(template); 
                 //updateAndSendResponse(rowString, template, res); // <-- you may need to change this
             });
