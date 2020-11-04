@@ -8,12 +8,12 @@
     <script type="application/javascript">
         // `year` and total counts for entire US => set these variables equal to appropriate value
         //   * these variables will be defined and accessible from any script loaded after this one
-        var year;
-        var coal_count;
-        var natural_gas_count;
-        var nuclear_count;
-        var petroleum_count;
-        var renewable_count;
+        var year = {{YEAR}};
+        var coal_count = {{COAL_TOTAL}};
+        var natural_gas_count = {{NATURAL_GAS_TOTAL}};
+        var nuclear_count = {{NUCLEAR_TOTAL}};
+        var petroleum_count = {{PETROLEUM_TOTAL}};
+        var renewable_count = {{RENEWABLE_TOTAL}};
     </script>
     <script type="application/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 </head>
@@ -35,61 +35,29 @@
         </tbody>
     </table>
     
-    <canvas id="myChart" width="1000" height="1000"></canvas>
+    <canvas id="myChart" width="100" height="100"></canvas>
     <script>
         var ctx = document.getElementById('myChart').getContext('2d');
         var myChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: [{{LABELS}}],
+                labels: ['Coal','Natural Gas', 'Nuclear', 'Petroleum', 'Renewable'],
                 datasets: [{
-                    label: 'Coal',
-                    data: [{{COAL_VALUES}}],
+                    label: 'Total Energy Used',
+                    data: [coal_count, natural_gas_count, nuclear_count, petroleum_count, renewable_count],
                     backgroundColor: [
-                        {{COAL_BACKGROUND}}
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(255, 99, 132, 0.2)'
                     ],
                     borderColor: [
-                        {{COAL_BORDER}}
-                    ],
-                    borderWidth: 1
-                }, {
-                    label: 'Natural Gas',
-                    data: [{{NATURAL_GAS_VALUES}}],
-                    backgroundColor: [
-                        {{NATURAL_GAS_BACKGROUND}}
-                    ],
-                    borderColor: [
-                        {{NATURAL_GAS_BORDER}}
-                    ],
-                    borderWidth: 1
-                }, {
-                    label: 'Nuclear',
-                    data: [{{NUCLEAR_VALUES}}],
-                    backgroundColor: [
-                        {{NUCLEAR_BACKGROUND}}
-                    ],
-                    borderColor: [
-                        {{NUCLEAR_BORDER}}
-                    ],
-                    borderWidth: 1
-                }, {
-                    label: 'Petroleum',
-                    data: [{{PETROLEUM_VALUES}}],
-                    backgroundColor: [
-                        {{PETROLEUM_BACKGROUND}}
-                    ],
-                    borderColor: [
-                        {{PETROLEUM_BORDER}}
-                    ],
-                    borderWidth: 1
-                }, {
-                    label: 'Renewable',
-                    data: [{{RENEWABLE_VALUES}}],
-                    backgroundColor: [
-                        {{RENEWABLE_BACKGROUND}}
-                    ],
-                    borderColor: [
-                        {{RENEWABLE_BORDER}}
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(255, 99, 132, 1)'
                     ],
                     borderWidth: 1
                 }]
