@@ -85,6 +85,7 @@ app.get('/year/:selected_year', (req, res) => {
                 template = template.replace('{{PETROLEUM_TOTAL}}', petroleum_total);
                 template = template.replace('{{RENEWABLE_TOTAL}}', renewable_total);
                 template = template.replace('{{YEAR}}', year);
+                template = template.replace('{{CURRENT_YEAR}}', year);
 
                 res.status(200).type('html').send(template); 
                 //updateAndSendResponse(rowString, template, res); // <-- you may need to change this
