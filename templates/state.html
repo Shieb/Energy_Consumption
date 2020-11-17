@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>US Energy Consumption</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
     <script type="application/javascript">
         // `state` and arrays of consumption per year => set these variables equal to appropriate value
         //   * these variables will be defined and accessible from any script loaded after this one
@@ -15,8 +15,112 @@
         var petroleum_counts;
         var renewable_counts;
     </script>
+    <script type="application/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 </head>
 <body >
+    <div class = "center">
+    <h1>{{STATE_NAME}}</h1>
+    <img src="https://www.50states.com/images/redesign/maps/{{STATE_PIC}}-largemap.png" alt = "An outline of the state" width = 500/>
+    <p>
+        image provided by 50states.com
+    </p>
+    </div>
+
     <!-- create template here -->
+    <div class = "floatleft">
+    <table id = "stateResult" style = "border-spacing: 10px;">
+        <thead>
+            <tr>
+                <td><b>Year</b></td>
+                <td><b>Coal</b></td>
+                <td><b>Natural Gas</b></td>
+                <td><b>Nuclear</b></td>
+                <td><b>Petroleum</b></td>
+                <td><b>Renewable</b></td>
+                <td><b>Total</b></td>
+            </tr>
+            
+        </thead>
+
+        <tbody>
+            {{DATA}}
+        </tbody>
+    </table>
+    </div>
+
+    <div class = "floatright" style = "height: 500px">
+    <canvas id="myChart" width="1000" height="1000"></canvas>
+    <script>
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [{{LABELS}}],
+                datasets: [{
+                    label: 'Coal',
+                    data: [{{COAL_VALUES}}],
+                    backgroundColor: [
+                        {{COAL_BACKGROUND}}
+                    ],
+                    borderColor: [
+                        {{COAL_BORDER}}
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'Natural Gas',
+                    data: [{{NATURAL_GAS_VALUES}}],
+                    backgroundColor: [
+                        {{NATURAL_GAS_BACKGROUND}}
+                    ],
+                    borderColor: [
+                        {{NATURAL_GAS_BORDER}}
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'Nuclear',
+                    data: [{{NUCLEAR_VALUES}}],
+                    backgroundColor: [
+                        {{NUCLEAR_BACKGROUND}}
+                    ],
+                    borderColor: [
+                        {{NUCLEAR_BORDER}}
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'Petroleum',
+                    data: [{{PETROLEUM_VALUES}}],
+                    backgroundColor: [
+                        {{PETROLEUM_BACKGROUND}}
+                    ],
+                    borderColor: [
+                        {{PETROLEUM_BORDER}}
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'Renewable',
+                    data: [{{RENEWABLE_VALUES}}],
+                    backgroundColor: [
+                        {{RENEWABLE_BACKGROUND}}
+                    ],
+                    borderColor: [
+                        {{RENEWABLE_BORDER}}
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+        </script>
+        </div>
 </body>
 </html>
