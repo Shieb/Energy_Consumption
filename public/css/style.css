@@ -77,3 +77,10 @@ tr td:hover { background: #666; color: #FFF; }
 .clearleft {
     clear: left;
 }
+.center {
+    margin: auto;
+    min-width: min-content;
+    max-width: max-content;
+    width: 25%;
+    padding: 10px;
+}
