@@ -70,3 +70,10 @@ tr td:hover { background: #666; color: #FFF; }
     float: left;
     width: 600px;
 }
+
+.clearright {
+    clear: right;
+}
+.clearleft {
+    clear: left;
+}

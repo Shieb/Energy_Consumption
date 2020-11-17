@@ -19,31 +19,39 @@
 </head>
 <body>
     <nav>
-        <a href="">first</a>
-        <a href="">second</a>
-        <a href="">third</a>
-        <a href="">fourth</a>
+        <a href="http://localhost:8000/state/MN">State</a>
+        <a href="http://localhost:8000/energy/coal">Energy</a>
     </nav>
 
     <h1>{{CURRENT_YEAR}}</h1>
-
+    
     <div class="floatleft">
-    <table id="yearResult">
-        <thead>
-            <tr>
-                <td><b>State</b></td>
-                <td><b>Coal</b></td>
-                <td><b>Natural Gas</b></td>
-                <td><b>Nuclear</b></td>
-                <td><b>Petroleum</b></td>
-                <td><b>Renewable</b></td>
-                <td><b>Total</b></td>
-            </tr>
-        </thead>
-        <tbody>
-            {{DATA}}
-        </tbody>
-    </table>
+        <p>Click here to change viewing year: 
+            <select onChange="window.location.href=this.value">
+                {{YEAR_LINKS}}
+            </select>
+        </p>
+    </div>
+
+    <div class = "clearleft">
+        <div class="floatleft">
+            <table id="yearResult">
+                <thead>
+                    <tr>
+                        <td><b>State</b></td>
+                        <td><b>Coal</b></td>
+                        <td><b>Natural Gas</b></td>
+                        <td><b>Nuclear</b></td>
+                        <td><b>Petroleum</b></td>
+                        <td><b>Renewable</b></td>
+                        <td><b>Total</b></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{DATA}}
+                </tbody>
+            </table>
+        </div>
     </div>
     
     <div class="floatright">
