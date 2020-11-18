@@ -40,7 +40,7 @@ app.get('/year/:selected_year', (req, res) => {
         // this will require a query to the SQL database
         if (err) {
             res.status(404).type('txt');
-            res.write('cannot read year.html');
+            res.write('ERROR 404: cannot read year.html');
             res.end();
         } else {
             //res.status(200).type('html').send(template); // <-- you may need to change this
@@ -48,6 +48,18 @@ app.get('/year/:selected_year', (req, res) => {
             let row;
             let rowString = "";
             let year = req.params.selected_year;
+            let prevYear;
+            if (year > 1960) {
+                prevYear = parseInt(year) - 1;
+            } else {
+                prevYear = 2018;
+            }
+            let nextYear;
+            if (year < 2018) {
+                nextYear = parseInt(year) + 1;
+            } else {
+                nextYear = 1960;
+            }
             let coal_total = 0;
             let natural_gas_total = 0;
             let nuclear_total = 0;
@@ -55,10 +67,11 @@ app.get('/year/:selected_year', (req, res) => {
             let renewable_total = 0;
             let currYear;
             let yearString = "";
+            let state;
 
             if (req.params.selected_year > 2018 || req.params.selected_year < 1960) {
                 res.status(404).type('txt');
-                res.write(req.params.selected_year + ' is not a valid year');
+                res.write('ERROR: ' + req.params.selected_year + ' is not a valid year');
                 res.end();
             }
 
@@ -100,6 +113,8 @@ app.get('/year/:selected_year', (req, res) => {
                     template = template.replace('{{RENEWABLE_TOTAL}}', renewable_total);
                     template = template.replace('{{YEAR}}', year);
                     template = template.replace('{{CURRENT_YEAR}}', year);
+                    template = template.replace('{{NEXT_YEAR}}', nextYear);
+                    template = template.replace('{{PREV_YEAR}}', prevYear);
 
                     res.status(200).type('html').send(template); 
                     //updateAndSendResponse(rowString, template, res); // <-- you may need to change this
