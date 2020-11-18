@@ -158,104 +158,165 @@ app.get('/state/:selected_state', (req, res) => {
             let petroleumBorder = "";
             let renewableBackground = "";
             let renewableBorder = "";
+            let stateString = "";
+            let prevState = "";
+            let nextState = "";
+
+            let p1 = new Promise((resolve, reject) => {
             
-            let exist = true;;
-            db.all(sql, [req.params.selected_state.toUpperCase()], (err, rows) => {
-                if(rows.length != 0)
-                    state = rows[0].state_name;
-                else
-                {
-                    res.status(404).type('txt').send("ERROR 404: No data for state: " + req.params.selected_state);
-                    exist = false;
-                }
+                db.all(sql, [req.params.selected_state.toUpperCase()], (err, rows) => {
+                    if(err || rows.length == 0)
+                        reject(err);
+                    else
+                    {
+                        resolve(rows[0]);
+                    }
+                });
+
             });
 
-            sql = `SELECT * FROM Consumption WHERE state_abbreviation = ?`;
-            db.all(sql, [req.params.selected_state.toUpperCase()], (err, rows) => {
+            let p2 = new Promise((resolve, reject) => {
+            
+                sql = 'SELECT * FROM States';
+                db.all(sql, (err, rows) => {
+
+                    if(err)
+                    {
+                        reject(err);
+                    }
+                    else
+                        resolve(rows);
+                });              
+            });
+
+            let p3 = new Promise((resolve, reject) => {
+
+                sql = `SELECT * FROM Consumption WHERE state_abbreviation = ?`;
+                db.all(sql, [req.params.selected_state.toUpperCase()], (err, rows) => {
+                    
+                    if(err)
+                        reject(err);
+                    else
+                        resolve(rows);
+                });
                 
-                for(row = 0; row < rows.length; row++) 
-                {
-                    let total = rows[row].coal + rows[row].natural_gas + rows[row].nuclear 
-                    + rows[row].petroleum + rows[row].renewable;
-
-                    if (row != rows.length && row != 0) {
-                        labelsString = labelsString + ", ";
-                        coalValueString = coalValueString  + ", ";
-                        naturalGasValueString = naturalGasValueString + ", ";
-                        nuclearValueString = nuclearValueString + ", ";
-                        petroleumValueString = petroleumValueString + ", ";
-                        renewableValueString = renewableValueString + ", ";
-
-                        coalBackground = coalBackground + ", ";
-                        coalBorder = coalBorder + ", ";
-                        naturalGasBackground = naturalGasBackground + ", ";
-                        naturalGasBorder = naturalGasBorder + ", ";
-                        nuclearBackground = nuclearBackground + ", ";
-                        nuclearBorder = nuclearBorder + ", ";
-                        petroleumBackground = petroleumBackground + ", ";
-                        petroleumBorder = petroleumBorder + ", ";
-                        renewableBackground = renewableBackground + ", ";
-                        renewableBorder = renewableBorder + ", ";
-
+            });
+            
+            Promise.all([p1, p2, p3]).then((rows) => {
+                    state = rows[0].state_name;
+                    
+                    stateString = stateString + '<option value="' + req.params.selected_state + '"></option>';
+                    for(row = 0; row < rows[1].length; row++)
+                    {
+                        let currState = rows[1][row].state_abbreviation;
+                        stateString = stateString + '<option value="' + currState + '">' + currState + '</option>';
+                        if(currState == rows[0].state_abbreviation)
+                        {
+                            if(currState == "AK")
+                            {
+                                prevState = "WY";
+                                nextState = "AL";
+                            }
+                            else if(currState == "WY")
+                            {
+                                prevState = "WV";
+                                nextState = "AK"; 
+                            }
+                            else
+                            {
+                                prevState = rows[1][row - 1].state_abbreviation;
+                                nextState = rows[1][row + 1].state_abbreviation;
+                            }
+                        }
                     }
 
-                    //console.log(rows[row]);
-                    rowString = rowString + "<tr>";
-                    rowString = rowString + "<td>" + rows[row].year + "</td>";
-                    rowString = rowString + "<td>" + rows[row].coal + "</td>";
-                    rowString = rowString + "<td>" + rows[row].natural_gas + "</td>";
-                    rowString = rowString + "<td>" + rows[row].nuclear + "</td>";
-                    rowString = rowString + "<td>" + rows[row].petroleum + "</td>";
-                    rowString = rowString + "<td>" + rows[row].renewable + "</td>";
-                    rowString = rowString + "<td>" + total + "</td>";
-                    rowString = rowString + "</tr>";
 
-                    labelsString = labelsString + "'" + rows[row].year + "'";
-                    coalValueString = coalValueString + "'" + rows[row].coal + "'";
-                    naturalGasValueString = naturalGasValueString + "'" + rows[row].natural_gas + "'";
-                    nuclearValueString = nuclearValueString + "'" + rows[row].nuclear + "'";
-                    petroleumValueString = petroleumValueString + "'" + rows[row].petroleum + "'";
-                    renewableValueString = renewableValueString + "'" + rows[row].renewable + "'";
+                    for(row = 0; row < rows[2].length; row++) 
+                    {
+                        let total = rows[2][row].coal + rows[2][row].natural_gas + rows[2][row].nuclear 
+                        + rows[2][row].petroleum + rows[2][row].renewable;
 
-                    coalBackground = coalBackground + "'rgba(255, 99, 132, 0.2)'";
-                    coalBorder = coalBorder + "'rgba(255, 99, 132, 1)'";
-                    naturalGasBackground = naturalGasBackground + "'rgba(54, 162, 235, 0.2)'";
-                    naturalGasBorder = naturalGasBorder + "'rgba(54, 162, 235, 1)'";
-                    nuclearBackground = nuclearBackground + "'rgba(255, 206, 86, 0.2)'";
-                    nuclearBorder = nuclearBorder + "'rgba(255, 206, 86, 1)'";
-                    petroleumBackground = petroleumBackground + "'rgba(75, 192, 192, 0.2)'";
-                    petroleumBorder = petroleumBorder + "'rgba(75, 192, 192, 1)'";
-                    renewableBackground = renewableBackground + "'rgba(153, 102, 255, 0.2)'";
-                    renewableBorder = renewableBorder + "'rgba(153, 102, 255, 1)'";
-                }
+                        if (row != rows[2].length && row != 0) {
+                            labelsString = labelsString + ", ";
+                            coalValueString = coalValueString  + ", ";
+                            naturalGasValueString = naturalGasValueString + ", ";
+                            nuclearValueString = nuclearValueString + ", ";
+                            petroleumValueString = petroleumValueString + ", ";
+                            renewableValueString = renewableValueString + ", ";
 
-                template = template.replace('{{STATE_PIC}}', req.params.selected_state.toLowerCase());
-                template = template.replace('{{STATE_NAME}}', state);
-                template = template.replace('{{DATA}}', rowString);
+                            coalBackground = coalBackground + ", ";
+                            coalBorder = coalBorder + ", ";
+                            naturalGasBackground = naturalGasBackground + ", ";
+                            naturalGasBorder = naturalGasBorder + ", ";
+                            nuclearBackground = nuclearBackground + ", ";
+                            nuclearBorder = nuclearBorder + ", ";
+                            petroleumBackground = petroleumBackground + ", ";
+                            petroleumBorder = petroleumBorder + ", ";
+                            renewableBackground = renewableBackground + ", ";
+                            renewableBorder = renewableBorder + ", ";
 
-                
-                template = template.replace('{{LABELS}}', labelsString);
-                template = template.replace('{{COAL_VALUES}}', coalValueString);
-                template = template.replace('{{NATURAL_GAS_VALUES}}', naturalGasValueString);
-                template = template.replace('{{NUCLEAR_VALUES}}', nuclearValueString);
-                template = template.replace('{{PETROLEUM_VALUES}}', petroleumValueString);
-                template = template.replace('{{RENEWABLE_VALUES}}', renewableValueString);
-                template = template.replace('{{COAL_BACKGROUND}}', coalBackground);
-                template = template.replace('{{COAL_BORDER}}', coalBorder);
-                template = template.replace('{{NATURAL_GAS_BACKGROUND}}', naturalGasBackground);
-                template = template.replace('{{NATURAL_GAS_BORDER}}', naturalGasBorder);
-                template = template.replace('{{NUCLEAR_BACKGROUND}}', nuclearBackground);
-                template = template.replace('{{NUCLEAR_BORDER}}', nuclearBorder);
-                template = template.replace('{{PETROLEUM_BACKGROUND}}', petroleumBackground);
-                template = template.replace('{{PETROLEUM_BORDER}}', petroleumBorder);
-                template = template.replace('{{RENEWABLE_BACKGROUND}}', renewableBackground);
-                template = template.replace('{{RENEWABLE_BORDER}}', renewableBorder);
+                        }
 
-                if (exist)
+                        //console.log(rows[row]);
+                        rowString = rowString + "<tr>";
+                        rowString = rowString + "<td>" + rows[2][row].year + "</td>";
+                        rowString = rowString + "<td>" + rows[2][row].coal + "</td>";
+                        rowString = rowString + "<td>" + rows[2][row].natural_gas + "</td>";
+                        rowString = rowString + "<td>" + rows[2][row].nuclear + "</td>";
+                        rowString = rowString + "<td>" + rows[2][row].petroleum + "</td>";
+                        rowString = rowString + "<td>" + rows[2][row].renewable + "</td>";
+                        rowString = rowString + "<td>" + total + "</td>";
+                        rowString = rowString + "</tr>";
+
+                        labelsString = labelsString + "'" + rows[2][row].year + "'";
+                        coalValueString = coalValueString + "'" + rows[2][row].coal + "'";
+                        naturalGasValueString = naturalGasValueString + "'" + rows[2][row].natural_gas + "'";
+                        nuclearValueString = nuclearValueString + "'" + rows[2][row].nuclear + "'";
+                        petroleumValueString = petroleumValueString + "'" + rows[2][row].petroleum + "'";
+                        renewableValueString = renewableValueString + "'" + rows[2][row].renewable + "'";
+
+                        coalBackground = coalBackground + "'rgba(255, 99, 132, 0.2)'";
+                        coalBorder = coalBorder + "'rgba(255, 99, 132, 1)'";
+                        naturalGasBackground = naturalGasBackground + "'rgba(54, 162, 235, 0.2)'";
+                        naturalGasBorder = naturalGasBorder + "'rgba(54, 162, 235, 1)'";
+                        nuclearBackground = nuclearBackground + "'rgba(255, 206, 86, 0.2)'";
+                        nuclearBorder = nuclearBorder + "'rgba(255, 206, 86, 1)'";
+                        petroleumBackground = petroleumBackground + "'rgba(75, 192, 192, 0.2)'";
+                        petroleumBorder = petroleumBorder + "'rgba(75, 192, 192, 1)'";
+                        renewableBackground = renewableBackground + "'rgba(153, 102, 255, 0.2)'";
+                        renewableBorder = renewableBorder + "'rgba(153, 102, 255, 1)'";
+                    }
+
+                    template = template.replace('{{STATE_PIC}}', req.params.selected_state.toLowerCase());
+                    template = template.replace('{{STATE_NAME}}', state);
+                    template = template.replace('{{DATA}}', rowString);
+
+                    template = template.replace('{{NEXT_STATE}}', nextState);
+                    template = template.replace('{{PREV_STATE}}', prevState);
+                    template = template.replace('{{STATE_LINKS}}', stateString);
+                    template = template.replace('{{LABELS}}', labelsString);
+                    template = template.replace('{{COAL_VALUES}}', coalValueString);
+                    template = template.replace('{{NATURAL_GAS_VALUES}}', naturalGasValueString);
+                    template = template.replace('{{NUCLEAR_VALUES}}', nuclearValueString);
+                    template = template.replace('{{PETROLEUM_VALUES}}', petroleumValueString);
+                    template = template.replace('{{RENEWABLE_VALUES}}', renewableValueString);
+                    template = template.replace('{{COAL_BACKGROUND}}', coalBackground);
+                    template = template.replace('{{COAL_BORDER}}', coalBorder);
+                    template = template.replace('{{NATURAL_GAS_BACKGROUND}}', naturalGasBackground);
+                    template = template.replace('{{NATURAL_GAS_BORDER}}', naturalGasBorder);
+                    template = template.replace('{{NUCLEAR_BACKGROUND}}', nuclearBackground);
+                    template = template.replace('{{NUCLEAR_BORDER}}', nuclearBorder);
+                    template = template.replace('{{PETROLEUM_BACKGROUND}}', petroleumBackground);
+                    template = template.replace('{{PETROLEUM_BORDER}}', petroleumBorder);
+                    template = template.replace('{{RENEWABLE_BACKGROUND}}', renewableBackground);
+                    template = template.replace('{{RENEWABLE_BORDER}}', renewableBorder);
+
+
                     res.status(200).type('html').send(template);
-                
+            }).catch((error) => {
+                res.status(404).type('txt').send("ERROR 404: No data for state: " + req.params.selected_state);
+                console.log(error);
             });
-          
         }
     });
 });
