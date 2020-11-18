@@ -20,16 +20,26 @@
 <body >
 
     <nav>
+        <a href="../state/{{PREV_STATE}}">Previous State</a>
         <a href="../year/2018">Year</a>
         <a href="../energy/coal">Energy</a>
+        <a href="../state/{{NEXT_STATE}}">Next State</a>
     </nav>
 
-    <div class = "center">
+    <div class = "floatleft" style = "height: 500px">
     <h1>{{STATE_NAME}}</h1>
     <img src="https://www.50states.com/images/redesign/maps/{{STATE_PIC}}-largemap.png" alt = "An outline of the state" width = 500/>
     <p>
         image provided by 50states.com
     </p>
+    </div>
+    
+    <div class="floatright" style = "height: 500px">
+        <p>Click here to change current state: 
+            <select onChange="window.location.href=this.value">
+                {{STATE_LINKS}}
+            </select>
+        </p>
     </div>
 
     <!-- create template here -->
