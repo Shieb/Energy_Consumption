@@ -3,23 +3,27 @@
     "version": "0.0.0",
     "description": "Dynamic Web Server using Node JS",
     "author": {
-        "name": "",
-        "email": ""
+        "name": "Evan Hanson",
+        "email": "hans2624@stthomas.edu"
     },
     "contributors": [
         {
-            "name": "",
-            "email": ""
+            "name": "Evan Hanson",
+            "email": "hans2624@stthomas.edu"
         },
         {
-            "name": "",
-            "email": ""
+            "name": "Oliver Wood",
+            "email": "oliver.wood@stthomas.edu"
+        }
+        {
+            "name": "Josh Ringling",
+            "email": "ring7885@stthomas.edu"
         }
     ],
     "main": "server.js",
     "repository": {
         "type": "git",
-        "url": ""
+        "url": "https://github.com/evan-hanson1024/CISC375-assignment2"
     },
     "dependencies": {
         "express": "^4.17.1",
