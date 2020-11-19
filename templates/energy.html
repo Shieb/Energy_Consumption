@@ -4,15 +4,752 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>US Energy Consumption</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
     <script type="application/javascript">
         // `energy_type` and object of consumption per year per state => set these variables equal to appropriate value
         //   * these variables will be defined and accessible from any script loaded after this one
-        var energy_type;
-        var energy_counts;  // e.g. {AK: [...], AL: [...], AR: [...], ...}
+        var energy_type = "{{TYPE}}";
+        var energy_counts = {{COUNTS}};// e.g. {AK: [...], AL: [...], AR: [...], ...}
+        var AKe = {{AKE}};
+        var ALe = {{ALE}};
+        var AZe = {{AZE}};
+        var CAe = {{CAE}};
+        var COe = {{COE}};
+        var CTe = {{CTE}};
+        var DEe = {{DEE}};
+        var FLe = {{FLE}};
+        var GAe = {{GAE}};
+        var HIe = {{HIE}};
+        var IAe = {{IAE}};
+        var IDe = {{IDE}};
+        var ILe = {{ILE}};
+        var INe = {{INE}};
+        var KSe = {{KSE}};
+        var KYe = {{KYE}};
+        var LAe = {{LAE}};
+        var MAe = {{MAE}};
+        var MDe = {{MDE}};
+        var MEe = {{MEE}};
+        var MIe = {{MIE}};
+        var MNe = {{MNE}};
+        var MOe = {{MOE}};
+        var MSe = {{MSE}};
+        var MTe = {{MTE}};
+        var NCe = {{NCE}};
+        var NDe = {{NDE}};
+        var NEe = {{NEE}};
+        var NHe = {{NHE}};
+        var NJe = {{NJE}};
+        var NMe = {{NME}};
+        var NVe = {{NVE}};
+        var NYe = {{NYE}};
+        var OHe = {{OHE}};
+        var OKe = {{OKE}};
+        var ORe = {{ORE}};
+        var PAe = {{PAE}};
+        var RIe = {{RIE}};
+        var SCe = {{SCE}};
+        var SDe = {{SDE}};
+        var TNe = {{TNE}};
+        var TXe = {{TXE}};
+        var UTe = {{UTE}};
+        var VAe = {{VAE}};
+        var VTe = {{VTE}};
+        var WAe = {{WAE}};
+        var WIe = {{WIE}};
+        var WVe = {{WVE}};
+        var WYe = {{WYE}};
+        var DCe = {{DCE}};
+
+        
+
     </script>
+    <script type="application/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 </head>
 <body>
-    <!-- create template here -->
+
+    
+    <nav>
+        <a href="../energy/{{PREV}}">Previous energy</a>
+        <a href="../state/mn">State</a>
+        <a href="../year/2018">Year</a>
+        <a href="../energy/{{NEXT}}">Next energy</a>
+
+    </nav>
+
+    <h1>{{TYPE2}}</h1>
+    
+    <div class="floatleft">
+        <p>Click here to change to another energy type: 
+            <select onChange="window.location.href=this.value">
+                {{ENERGY_LINKS}}
+            </select>
+        </p>
+    </div>
+
+    <img src = '{{IMAGEe}}' alt = '{{ALTe}}'></img>
+    <table id="energyConsumption">
+        <thead>
+            <tr>
+                <td><b>Year</b></td>
+                <td><b>AK</b></td>
+                <td><b>AL</b></td>
+                <td><b>AR</b></td>
+                <td><b>AZ</b></td>
+                <td><b>CA</b></td>
+                <td><b>CO</b></td>
+                <td><b>CT</b></td>
+                <td><b>DC</b></td>
+                <td><b>DE</b></td>
+                <td><b>FL</b></td>
+                <td><b>GA</b></td>
+                <td><b>HI</b></td>
+                <td><b>IA</b></td>
+                <td><b>ID</b></td>
+                <td><b>IL</b></td>
+                <td><b>IN</b></td>
+                <td><b>KS</b></td>
+                <td><b>KY</b></td>
+                <td><b>LA</b></td>
+                <td><b>MA</b></td>
+                <td><b>ME</b></td>
+                <td><b>MI</b></td>
+                <td><b>MN</b></td>
+                <td><b>MO</b></td>
+                <td><b>MO</b></td>
+                <td><b>MS</b></td>
+                <td><b>MT</b></td>
+                <td><b>NC</b></td>
+                <td><b>ND</b></td>
+                <td><b>NE</b></td>
+                <td><b>NH</b></td>
+                <td><b>NJ</b></td>
+                <td><b>NM</b></td>
+                <td><b>NV</b></td>
+                <td><b>NY</b></td>
+                <td><b>OH</b></td>
+                <td><b>OK</b></td>
+                <td><b>OR</b></td>
+                <td><b>PA</b></td>
+                <td><b>RI</b></td>
+                <td><b>SC</b></td>
+                <td><b>SD</b></td>
+                <td><b>TN</b></td>
+                <td><b>TX</b></td>
+                <td><b>UT</b></td>
+                <td><b>VA</b></td>
+                <td><b>VT</b></td>
+                <td><b>WA</b></td>
+                <td><b>WI</b></td>
+                <td><b>WV</b></td>
+                <td><b>WY</b></td>
+            </tr>
+        </thead>
+        <tbody>
+            {{DATA}}
+        </tbody>
+    </table>
+
+    <canvas id="myChart" width="600" height="500"></canvas>
+    <script>
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['1960','1961','1962','1963','1964','1965','1966','1967','1968','1969','1970','1971','1972','1973','1974','1975','1976','1977','1978','1979','1980','1981','1982','1983','1984','1985','1986','1987','1988','1989','1990','1991','1992','1993','1994','1995','1996','1997','1998','1999','2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018'],
+                datasets: [{
+                    label: 'AK',
+                    data: AKe,
+                    backgroundColor: [
+                        'rgba(60, 149, 200, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(60, 149, 200, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'AL',
+                    data: ALe,
+                    backgroundColor: [
+                        'rgba(60, 200, 156, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(60, 200, 156, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                    
+                }, {
+                    label: 'AZ',
+                    data: AZe,
+                    backgroundColor: [
+                        'rgba(74, 200, 60, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(74, 200, 60, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'CA',
+                    data: CAe,
+                    backgroundColor: [
+                        'rgba(60, 76, 200, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(60, 76, 200, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'CO',
+                    data: COe,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'CT',
+                    data: CTe,
+                    backgroundColor: [
+                        'rgbargba(200, 60, 93, 1)'
+                    ],
+                    borderColor: [
+                        'rgbargba(200, 60, 93, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'DE',
+                    data: DEe,
+                    backgroundColor: [
+                        'rgba(200, 177, 60, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(200, 177, 60, 1)'  
+                    ],
+
+                    borderWidth: 1
+                }, {
+                    label: 'FL',
+                    data: FLe,
+                    backgroundColor: [
+                        'rgba(200, 81, 60, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(200, 81, 60, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'GA',
+                    data: GAe,
+                    backgroundColor: [
+                        'rgba(200, 60, 60, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(200, 60, 60, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'HI',
+                    data: HIe,
+                    backgroundColor: [
+                        'rgba(74, 200, 60, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(74, 200, 60, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'IA',
+                    data: IAe,
+                    backgroundColor: [
+                        'rgba(60, 200, 186, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(60, 200, 186, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'ID',
+                    data: IDe,
+                    backgroundColor: [
+                        'rgba(158, 60, 200, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(158, 60, 200, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'IL',
+                    data: ILe,
+                    backgroundColor: [
+                        'rgba(165, 164, 229, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(165, 164, 229, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'IN',
+                    data: INe,
+                    backgroundColor: [
+                        'rgba(166, 229, 164, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(166, 229, 164, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'KS',
+                    data: KSe,
+                    backgroundColor: [
+                        'rgba(220, 229, 164, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(220, 229, 164, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'KY',
+                    data: KYe,
+                    backgroundColor: [
+                        'rgba(229, 176, 164, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(229, 176, 164, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'LA',
+                    data: LAe,
+                    backgroundColor: [
+                        'rgba(229, 164, 169, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(229, 164, 169, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'MA',
+                    data: MAe,
+                    backgroundColor: [
+                        'rgba(212, 164, 229, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(212, 164, 229, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'MD',
+                    data: MDe,
+                    backgroundColor: [
+                        'rgba(74, 26, 91, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(74, 26, 91, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'ME',
+                    data: MEe,
+                    backgroundColor: [
+                        'rgba(26, 28, 91, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(26, 28, 91, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'MI',
+                    data: MIe,
+                    backgroundColor: [
+                        'rgba(26, 91, 29, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(26, 91, 29, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'MN',
+                    data: MNe,
+                    backgroundColor: [
+                        'rgba(91, 82, 26, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(91, 82, 26, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'MO',
+                    data: MOe,
+                    backgroundColor: [
+                        'rgba(91, 39, 26, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(91, 39, 26, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'MS',
+                    data: MSe,
+                    backgroundColor: [
+                        'rgba(28, 91, 26, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(28, 91, 26, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'MT',
+                    data: MTe,
+                    backgroundColor: [
+                        'rgba(0, 0, 0, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(0, 0, 0, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'NC',
+                    data: NCe,
+                    backgroundColor: [
+                        'rgba(35, 119, 123, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(35, 119, 123, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'ND',
+                    data: NDe,
+                    backgroundColor: [
+                        'rgba(31, 90, 111, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(31, 90, 111, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }, {
+                    label: 'NE',
+                    data: NEe,
+                    backgroundColor: [
+                        'rgba(31, 38, 111, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(31, 38, 111, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'NH',
+                    data: NHe,
+                    backgroundColor: [
+                        'rgba(85, 31, 111, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(85, 31, 111, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'NJ',
+                    data: NJe,
+                    backgroundColor: [
+                        'rgba(111, 31, 85, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(111, 31, 85, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'NM',
+                    data: NMe,
+                    backgroundColor: [
+                        'rgba(111, 31, 31, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(111, 31, 31, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'NV',
+                    data: NVe,
+                    backgroundColor: [
+                        'rgba(250, 66, 66, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(250, 66, 66, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'NY',
+                    data: NYe,
+                    backgroundColor: [
+                        'rgba(250, 66, 66, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(250, 66, 66, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'OH',
+                    data: OHe,
+                    backgroundColor: [
+                        'rgba(250, 66, 232, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(250, 66, 232, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'OR',
+                    data: ORe,
+                    backgroundColor: [
+                        'rgba(213, 66, 250, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(213, 66, 250, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'PA',
+                    data: PAe,
+                    backgroundColor: [
+                        'rgba(164, 66, 250, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(164, 66, 250, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'OK',
+                    data: OKe,
+                    backgroundColor: [
+                        'rgba(115, 66, 250, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(115, 66, 250, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'OR',
+                    data: ORe,
+                    backgroundColor: [
+                        'rgba(66, 81, 250, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(66, 81, 250, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'PA',
+                    data: PAe,
+                    backgroundColor: [
+                        'rgba(66, 140, 250, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(66, 140, 250, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'RI',
+                    data: RIe,
+                    backgroundColor: [
+                        'rgba(66, 204, 250, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(66, 204, 250, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'SC',
+                    data: SCe,
+                    backgroundColor: [
+                        'rgba(66, 244, 250, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(66, 244, 250, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'SD',
+                    data: SDe,
+                    backgroundColor: [
+                        'rgba(66, 250, 210, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(66, 250, 210, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'TN',
+                    data: TNe,
+                    backgroundColor: [
+                        'rgba(66, 250, 164, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(66, 250, 164, 1)'  
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'TX',
+                    data: TXe,
+                    backgroundColor: [
+                        'rgba(66, 250, 109, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(66, 250, 109, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                },{
+                    label: 'UT',
+                    data: UTe,
+                    backgroundColor: [
+                        'rgba(66, 250, 137, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(66, 250, 137, 1)'  
+                    ],
+                    borderWidth: 1
+                },{
+                    label: 'VA',
+                    data: VAe,
+                    backgroundColor: [
+                        'rgba(66, 250, 66, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(66, 250, 66, 1)'  
+                    ],
+                    borderWidth: 1
+                },{
+                    label: 'VT',
+                    data: VTe,
+                    backgroundColor: [
+                        'rgba(118, 250, 66, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(118, 250, 66, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                },{
+                    label: 'WA',
+                    data: WAe,
+                    backgroundColor: [
+                        'rgba(164, 250, 66, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(164, 250, 66, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                },{
+                    label: 'WI',
+                    data: WIe,
+                    backgroundColor: [
+                        'rgba(204, 250, 66, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(204, 250, 66, 1)'  
+                    ],
+                    borderWidth: 1
+                },{
+                    label: 'WV',
+                    data: WVe,
+                    backgroundColor: [
+                        'rgba(250, 247, 66, 1)'
+                    ],
+                    fill: false,
+                    borderColor: [
+                        'rgba(250, 247, 66, 1)'  
+                    ],
+                    borderWidth: 1
+                },{
+                    label: 'WY',
+                    data: WYe,
+                    backgroundColor: [
+                        'rgba(250, 213, 66, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(250, 213, 66, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                },{
+                    label: 'DC',
+                    data: DCe,
+                    backgroundColor: [
+                        'rgba(250, 140, 66, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(250, 140, 66, 1)'  
+                    ],
+                    fill: false,
+                    borderWidth: 1
+                }
+                ]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
 </body>
 </html>
