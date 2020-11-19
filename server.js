@@ -324,11 +324,624 @@ app.get('/state/:selected_state', (req, res) => {
 // GET request handler for '/energy/*'
 app.get('/energy/:selected_energy_source', (req, res) => {
     console.log(req.params.selected_energy_source);
-    fs.readFile(path.join(template_dir, 'energy.html'), (err, template) => {
-        // modify `template` and send response
-        // this will require a query to the SQL database
+    fs.readFile(path.join(template_dir, 'energy.html'),"utf8", (err, template) => {
+        
+        if (err) {
+            res.status(404).type('txt');
+            res.write('cannot read energy.html');
+            res.end();
+        } else {
+            let exist = true;
+            let energy_type = req.params.selected_energy_source;
+            if(energy_type != "coal" && energy_type != "renewable" &&energy_type != "nuclear" &&energy_type != "petroleum" &&energy_type != "natural_gas"){
+                res.status(404).type('txt');
+                res.write('cannot find data for '+energy_type);
+                res.end();
+                exist = false;
 
-        res.status(200).type('html').send(template); // <-- you may need to change this
+            }
+            console.log(energy_type);
+            let energythings = ['coal','renewable','petroleum','natural_gas', 'nuclear'];
+            let prev;
+            let next;
+            if(energy_type == "coal"){
+                prev = energythings[4];
+                next = energythings[1];
+            }
+
+            if(energy_type == "renewable"){
+                prev = energythings[0];
+                next = energythings[2];
+            }
+            if(energy_type == "petroleum"){
+                prev = energythings[1];
+                next = energythings[3];
+            }
+            if(energy_type == "natural_gas"){
+                prev = energythings[2];
+                next = energythings[4];
+            }
+            if(energy_type == "nuclear"){
+                prev = energythings[3];
+                next = energythings[0];
+            }
+            let sql = 'SELECT year, state_abbreviation, '+energy_type+' FROM Consumption WHERE true group by state_abbreviation, year'
+            let energy_counts = 0;
+            let year = "";
+            let state_abbreviation = "";
+            let rowString = "";
+            let labelsString = "";
+            let counter = 0;
+            let i;
+            let energylinks = '<option value=""></option><option value="coal">coal</option><option value="renewable">renewable</option><option value="petroleum">petroleum</option><option value="natural_gas">natural_gas</option><option value="nuclear">nuclear</option>';
+            let AKe = "";
+            let ALe = "";
+            let ARe = "";
+            let AZe = "";
+            let CAe = "";
+            let COe = "";
+            let CTe = "";
+            let DEe = "";
+            let FLe = "";
+            let GAe = "";
+            let HIe = "";
+            let IAe = "";
+            let IDe = "";
+            let ILe = "";
+            let INe = "";
+            let KSe = "";
+            let KYe = "";
+            let LAe = "";
+            let MAe = "";
+            let MDe = "";
+            let MEe = "";
+            let MIe = "";
+            let MNe = "";
+            let MOe = "";
+            let MSe = "";
+            let MTe = "";
+            let NCe = "";
+            let NDe = "";
+            let NEe = "";
+            let NHe = "";
+            let NJe = "";
+            let NMe = "";
+            let NVe = "";
+            let NYe = "";
+            let OHe = "";
+            let OKe = "";
+            let ORe = "";
+            let PAe = "";
+            let RIe = "";
+            let SCe = "";
+            let SDe = "";
+            let TNe = "";
+            let TXe = "";
+            let UTe = "";
+            let VAe = "";
+            let VTe = "";
+            let WAe = "";
+            let WIe = "";
+            let WVe = "";
+            let WYe = "";
+            let DCe = "";
+            if(exist){
+            db.all(sql,[], (err, rows) => {
+                
+                if(err){
+                    console.log(err);
+                }
+                for(i=0; i < rows.length;i++){
+                    
+                    if (counter == 51){
+                        counter = 0;
+                        rowString = rowString + "</tr>";
+                    }
+
+                    if(counter == 0){
+                        rowString = rowString + "<tr>";
+                        rowString = rowString + "<td>" + rows[i].year+ "</td>";
+                        
+                            labelsString = labelsString + "'" +rows[i].year+"',"; 
+                        
+                    }
+                    counter = counter+1;
+
+                    rowString = rowString + "<td>" + rows[i][energy_type]+"</td>";
+
+                    if(rows[i].state_abbreviation == "AK"){
+                        if(AKe == ""){
+                            AKe = rows[i][energy_type];
+                        } else {
+                            AKe = AKe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                    if(rows[i].state_abbreviation == "AL"){
+                        if(ALe == ""){
+                            ALe = rows[i][energy_type];
+                        } else {
+                            ALe = ALe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                    if(rows[i].state_abbreviation == "AR"){
+                        if(ARe == ""){
+                            ARe = rows[i][energy_type];
+                        } else {
+                            ARe = ARe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                    if(rows[i].state_abbreviation == "AZ"){
+                        if(AKe == ""){
+                            AZe = rows[i][energy_type];
+                        } else {
+                            AZe = AZe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                    if(rows[i].state_abbreviation == "CA"){
+                        if(CAe == ""){
+                            CAe = rows[i][energy_type];
+                        } else {
+                            CAe = CAe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "CO"){
+                        if(COe == ""){
+                            COe = rows[i][energy_type];
+                        } else {
+                            COe = COe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "CT"){
+                        if(CTe == ""){
+                            CTe = rows[i][energy_type];
+                        } else {
+                            CTe = CTe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "DC"){
+                        if(DCe == ""){
+                            DCe = rows[i][energy_type];
+                        } else {
+                            DCe = DCe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "DE"){
+                        if(DEe == ""){
+                            DEe = rows[i][energy_type];
+                        } else {
+                            DEe = DEe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "FL"){
+                        if(FLe == ""){
+                            FLe = rows[i][energy_type];
+                        } else {
+                            FLe = FLe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "GA"){
+                        if(GAe == ""){
+                            GAe = rows[i][energy_type];
+                        } else {
+                            GAe = GAe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "HI"){
+                        if(HIe == ""){
+                            HIe = rows[i][energy_type];
+                        } else {
+                            HIe = HIe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                    if(rows[i].state_abbreviation == "IA"){
+                        if(IAe == ""){
+                            IAe = rows[i][energy_type];
+                        } else {
+                            IAe = IAe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                    if(rows[i].state_abbreviation == "ID"){
+                        if(IDe == ""){
+                            IDe = rows[i][energy_type];
+                        } else {
+                            IDe = IDe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                    if(rows[i].state_abbreviation == "IL"){
+                        if(ILe == ""){
+                            ILe = rows[i][energy_type];
+                        } else {
+                            ILe = ILe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "IN"){
+                        if(INe == ""){
+                            INe = rows[i][energy_type];
+                        } else {
+                            INe = INe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "KS"){
+                        if(KSe == ""){
+                            KSe = rows[i][energy_type];
+                        } else {
+                            KSe = KSe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "KY"){
+                        if(KYe == ""){
+                            KYe = rows[i][energy_type];
+                        } else {
+                            KYe = KYe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "LA"){
+                        if(LAe == ""){
+                            LAe = rows[i][energy_type];
+                        } else {
+                            LAe = LAe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "MA"){
+                        if(MAe == ""){
+                            MAe = rows[i][energy_type];
+                        } else {
+                            MAe = MAe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "ME"){
+                        if(MEe == ""){
+                            MEe = rows[i][energy_type];
+                        } else {
+                            MEe = MEe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "MI"){
+                        if(MIe == ""){
+                            MIe = rows[i][energy_type];
+                        } else {
+                            MIe = MIe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                    if(rows[i].state_abbreviation == "MN"){
+                        if(MNe == ""){
+                            MNe = rows[i][energy_type];
+                        } else {
+                            MNe = MNe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                    if(rows[i].state_abbreviation == "MO"){
+                        if(MOe == ""){
+                            MOe = rows[i][energy_type];
+                        } else {
+                            MOe = MOe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                    if(rows[i].state_abbreviation == "MS"){
+                        if(MSe == ""){
+                            MSe = rows[i][energy_type];
+                        } else {
+                            MSe = MSe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "MT"){
+                        if(MTe == ""){
+                            MTe = rows[i][energy_type];
+                        } else {
+                            MTe = MTe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "NC"){
+                        if(NCe == ""){
+                            NCe = rows[i][energy_type];
+                        } else {
+                            NCe = NCe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "ND"){
+                        if(NDe == ""){
+                            NDe = rows[i][energy_type];
+                        } else {
+                            NDe = NDe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "NE"){
+                        if(NEe == ""){
+                            NEe = rows[i][energy_type];
+                        } else {
+                            NEe = NEe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "NH"){
+                        if(NHe == ""){
+                            NHe = rows[i][energy_type];
+                        } else {
+                            NHe = NHe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "NJ"){
+                        if(NJe == ""){
+                            NJe = rows[i][energy_type];
+                        } else {
+                            NJe = NJe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "NM"){
+                        if(NMe == ""){
+                            NMe = rows[i][energy_type];
+                        } else {
+                            NMe = NMe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                    if(rows[i].state_abbreviation == "NV"){
+                        if(NVe == ""){
+                            NVe = rows[i][energy_type];
+                        } else {
+                            NVe = NVe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                    if(rows[i].state_abbreviation == "NY"){
+                        if(NYe == ""){
+                            NYe = rows[i][energy_type];
+                        } else {
+                            NYe = NYe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                    if(rows[i].state_abbreviation == "OH"){
+                        if(OHe == ""){
+                            OHe = rows[i][energy_type];
+                        } else {
+                            OHe = OHe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "OK"){
+                        if(OKe == ""){
+                            OKe = rows[i][energy_type];
+                        } else {
+                            OKe = OKe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "OR"){
+                        if(ORe == ""){
+                            ORe = rows[i][energy_type];
+                        } else {
+                            ORe = ORe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "PA"){
+                        if(PAe == ""){
+                            PAe = rows[i][energy_type];
+                        } else {
+                            PAe = PAe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                     
+                    if(rows[i].state_abbreviation == "RI"){
+                        if(RIe == ""){
+                            RIe = rows[i][energy_type];
+                        } else {
+                            RIe = RIe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "SC"){
+                        if(SCe == ""){
+                            SCe = rows[i][energy_type];
+                        } else {
+                            SCe = SCe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "SD"){
+                        if(SDe == ""){
+                            SDe = rows[i][energy_type];
+                        } else {
+                            SDe = SDe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                    if(rows[i].state_abbreviation == "TN"){
+                        if(TNe == ""){
+                            TNe = rows[i][energy_type];
+                        } else {
+                            TNe = TNe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                    if(rows[i].state_abbreviation == "TX"){
+                        if(TXe == ""){
+                            TXe = rows[i][energy_type];
+                        } else {
+                            TXe = TXe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                    if(rows[i].state_abbreviation == "UT"){
+                        if(UTe == ""){
+                            UTe = rows[i][energy_type];
+                        } else {
+                            UTe = UTe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "VA"){
+                        if(VAe == ""){
+                            VAe = rows[i][energy_type];
+                        } else {
+                            VAe = VAe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "VT"){
+                        if(VTe == ""){
+                            VTe = rows[i][energy_type];
+                        } else {
+                            VTe = VTe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "WA"){
+                        if(WAe == ""){
+                            WAe = rows[i][energy_type];
+                        } else {
+                            WAe = WAe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "WI"){
+                        if(AKe == ""){
+                            WIe = rows[i][energy_type];
+                        } else {
+                            WIe = WIe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "WV"){
+                        if(WVe == ""){
+                            WVe = rows[i][energy_type];
+                        } else {
+                            WVe = WVe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+                    if(rows[i].state_abbreviation == "WY"){
+                        if(WYe == ""){
+                            WYe = rows[i][energy_type];
+                        } else {
+                            WYe = WYe +","+rows[i][energy_type];
+                        }
+                        
+                    }
+
+                }
+
+                let image = "../"+energy_type+".jpg";
+                let alt = "image of "+energy_type;
+                labelsString = labelsString.substring(0, labelsString.length - 1);
+                template = template.replace('{{AKE}}',"["+AKe+"]");
+                template = template.replace('{{ALE}}',"["+ALe+"]");
+                template = template.replace('{{ARE}}',"["+ARe+"]");
+                template = template.replace('{{AZE}}',"["+AZe+"]");
+                template = template.replace('{{CAE}}',"["+CAe+"]");
+                template = template.replace('{{COE}}',"["+COe+"]");
+                template = template.replace('{{CTE}}',"["+CTe+"]");
+                template = template.replace('{{DEE}}',"["+DEe+"]");
+                template = template.replace('{{FLE}}',"["+FLe+"]");
+                template = template.replace('{{GAE}}',"["+GAe+"]");
+                template = template.replace('{{HIE}}',"["+HIe+"]");
+                template = template.replace('{{IAE}}',"["+IAe+"]");
+                template = template.replace('{{IDE}}',"["+IDe+"]");
+                template = template.replace('{{ILE}}',"["+ILe+"]");
+                template = template.replace('{{INE}}',"["+INe+"]");
+                template = template.replace('{{KSE}}',"["+KSe+"]");
+                template = template.replace('{{KYE}}',"["+KYe+"]");
+                template = template.replace('{{LAE}}',"["+LAe+"]");
+                template = template.replace('{{MAE}}',"["+MAe+"]");
+                template = template.replace('{{MDE}}',"["+MDe+"]");
+                template = template.replace('{{MEE}}',"["+MEe+"]");
+                template = template.replace('{{MIE}}',"["+MIe+"]");
+                template = template.replace('{{MNE}}',"["+MNe+"]");
+                template = template.replace('{{MOE}}',"["+MOe+"]");
+                template = template.replace('{{MSE}}',"["+MSe+"]");
+                template = template.replace('{{MTE}}',"["+MTe+"]");
+                template = template.replace('{{NCE}}',"["+NCe+"]");
+                template = template.replace('{{NDE}}',"["+NDe+"]");
+                template = template.replace('{{NEE}}',"["+NEe+"]");
+                template = template.replace('{{NHE}}',"["+NHe+"]");
+                template = template.replace('{{NJE}}',"["+NJe+"]");
+                template = template.replace('{{NME}}',"["+NMe+"]");
+                template = template.replace('{{NVE}}',"["+NVe+"]");
+                template = template.replace('{{NYE}}',"["+NYe+"]");
+                template = template.replace('{{OHE}}',"["+OHe+"]");
+                template = template.replace('{{OKE}}',"["+OKe+"]");
+                template = template.replace('{{ORE}}',"["+ORe+"]");
+                template = template.replace('{{PAE}}',"["+PAe+"]");
+                template = template.replace('{{RIE}}',"["+RIe+"]");
+                template = template.replace('{{SCE}}',"["+SCe+"]");
+                template = template.replace('{{SDE}}',"["+SDe+"]");
+                template = template.replace('{{TNE}}',"["+TNe+"]");
+                template = template.replace('{{TXE}}',"["+TXe+"]");
+                template = template.replace('{{UTE}}',"["+UTe+"]");
+                template = template.replace('{{VAE}}',"["+VAe+"]");
+                template = template.replace('{{VTE}}',"["+VTe+"]");
+                template = template.replace('{{WAE}}',"["+WAe+"]");
+                template = template.replace('{{WIE}}',"["+WIe+"]");
+                template = template.replace('{{WVE}}',"["+WVe+"]");
+                template = template.replace('{{WYE}}',"["+WYe+"]");
+                template = template.replace('{{DCE}}',"["+DCe+"]");
+                template = template.replace('{{ENERGY_LINKS}}',energylinks);
+                template = template.replace('{{LABELS}}',labelsString);
+                template = template.replace('{{DATA}}', rowString);
+                template = template.replace('{{TYPE2}}', req.params.selected_energy_source.toUpperCase());
+                template = template.replace('{{COUNTS}}', energy_counts);
+                template = template.replace('{{STATE}}', state_abbreviation);
+                template = template.replace('{{YEAR}}', year);
+                template = template.replace('{{IMAGEe}}', image);
+                template = template.replace('{{ALTe}}', alt);
+                template = template.replace('{{PREV}}', prev);
+                template = template.replace('{{NEXT}}', next);
+                
+               
+                    res.status(200).type('html').send(template);
+                
+                 
+            });
+        }    
+        }
     });
 });
 
